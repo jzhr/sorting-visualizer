@@ -3,6 +3,11 @@ export function getMergeSortAnimations(array) {
   const animations = [];
   const auxiliaryArray = array.slice();
   mergeSortHelper(array, 0, array.length - 1, auxiliaryArray, animations);
+
+  for (let i = 0; i <= array.length - 1; i++) {
+    animations.push(["finished", i]);
+  }
+
   return animations;
 }
 
@@ -49,7 +54,7 @@ function doMerge(
   while (i <= middleIdx) {
     animations.push([i, i]);
     animations.push([i, i]);
-    
+
     animations.push([k, auxiliaryArray[i]]);
     mainArray[k++] = auxiliaryArray[i++];
   }

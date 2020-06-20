@@ -24,7 +24,10 @@ export function getSelectionSortAnimations(array) {
       auxiliaryArray[min_idx] = auxiliaryArray[i];
       auxiliaryArray[i] = min;
     }
+    
+    for (let i = 0; i <= endIdx; i++) {
+        animations.push(["finished", i, i]);
+    }
 
-    //array = auxiliaryArray;
-    return [animations, array];
+    return animations;
   }
