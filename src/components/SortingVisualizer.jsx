@@ -1,5 +1,6 @@
 import React from 'react';
-import {getMergeSortAnimations} from '../sortingAlgorithms/sortingAlgorithms.js';
+import {getMergeSortAnimations} from '../sortingAlgorithms/MergeSort.js';
+import {getSelectionSortAnimations} from '../sortingAlgorithms/SelectionSort.js';
 import '../styles/SortingVisualizer.css';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
@@ -7,23 +8,15 @@ import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography'
 import Toolbar from '@material-ui/core/Toolbar';
 import {Title} from './Title'
-import { spacing } from '@material-ui/system';
-import SimpleSlider from './Slider';
 
+// Number of bars (value) in the array
+const NUMBER_OF_ARRAY_BARS = 100;
 
-// Change this value for the number of bars (value) in the array.
-const NUMBER_OF_ARRAY_BARS = 310;
-
-// This is the main color of the array bars.
+// Main color of the array bars
 const PRIMARY_COLOR = '#157eff';
 
-// This is the color of array bars that are being compared throughout the animations.
+// Color of array bars that are being compared throughout the animations
 const SECONDARY_COLOR = 'red';
-
-// Color for bars when sorting is complete
-const TERTIARY_COLOR = 'green'
-
-
 
 export default class SortingVisualizer extends React.Component {
 
@@ -33,37 +26,15 @@ export default class SortingVisualizer extends React.Component {
     this.state = {
       array: [],
       title: 'Select a sorting algorithm',
-      animationSpeed: 1,
+      animationSpeed: 2,
+      selectionDisabled: false,
+      insertionDisabled: false,
       mergeDisabled: false,
       quickDisabled: false,
       sortDisabled: false,
       // Default selected sorting algorithm (0: merge)
-      selectedAlgo: -1
+      selectedAlgo: -1,
     };
-
-    this.updateSpeed = this.updateSpeed.bind(this);
-  }
-
-  updateSpeed = (value) => {
-       this.setState({
-         animationSpeed: value
-       });
-  }
-
-  disableButtons() {
-    this.setState({
-      mergeDisabled: true,
-      quickDisabled: true,
-      sortDisabled: true,
-    })
-  }
-
-  enableButtons(){
-    this.setState({
-      mergeDisabled: false,
-      quickDisabled: false,
-      sortDisabled: false,
-    })
   }
 
   componentDidMount() {
@@ -79,9 +50,116 @@ export default class SortingVisualizer extends React.Component {
 
     const array = [];
     for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
-      array.push(randomIntFromInterval(5, 730));
+      array.push(randomIntFromInterval(50, 650));
     }
     this.setState({array});
+  }
+
+  disableButtons() {
+    this.setState({
+      selectionDisabled: true,
+      insertionDisabled: true,
+      mergeDisabled: true,
+      quickDisabled: true,
+      sortDisabled: true,
+    })
+  }
+
+  enableButtons(){
+    this.setState({
+      selectionDisabled: false,
+      insertionDisabled: false,
+      mergeDisabled: false,
+      quickDisabled: false,
+      sortDisabled: false,
+    })
+  }
+
+  // Select algorithm to be run when an algorithm button is clicked
+  selectSortingAlgorithm(val) {
+    if (val === 0) {
+      this.setState({
+        selectedAlgo: 0,
+        selectionDisabled: true,
+        insertionDisabled: false,
+        mergeDisabled: false,
+        quickDisabled: false,
+        title: 'Selection Sort'
+      })
+    } else if (val === 1) {
+      this.setState({
+        selectedAlgo: 1,
+        selectionDisabled: false,
+        insertionDisabled: true,
+        mergeDisabled: false,
+        quickDisabled: false,
+        title: 'Insertion Sort'
+      })
+    } else if (val === 2) {
+      this.setState({
+        selectedAlgo: 2,
+        selectionDisabled: false,
+        insertionDisabled: false,
+        mergeDisabled: true,
+        quickDisabled: false,
+        title: 'Merge Sort'
+      })
+    } else if (val === 3) {
+      this.setState({
+        selectedAlgo: 2,
+        selectionDisabled: false,
+        insertionDisabled: false,
+        mergeDisabled: false,
+        quickDisabled: true,
+        title: 'Quick Sort'
+      })
+    }
+  }
+
+  // Handler for 'Sort!' button
+  runSortingAlgorithm() {
+    if (this.state.selectedAlgo === 0) {
+      this.disableButtons()
+      this.selectionSort()
+    } else if (this.state.selectedAlgo === 1) {
+      this.disableButtons()
+      this.insertionSort()
+    } else if (this.state.selectedAlgo === 2) {
+      this.disableButtons()
+      this.mergeSort()
+    } else if (this.state.selectedAlgo === 3) {
+      this.disableButtons()
+      this.quickSort()
+    }
+  }
+
+  selectionSort() {
+    const [animations, sortArray] = getSelectionSortAnimations(this.state.array);
+      for (let i = 0; i < animations.length; i++) {
+          const isColorChange = (animations[i][0] === "comparison1") || (animations[i][0] === "comparison2");
+          const arrayBars = document.getElementsByClassName('array-bar');
+          if(isColorChange === true) {
+              const color = (animations[i][0] === "comparison1") ? SECONDARY_COLOR : PRIMARY_COLOR;
+              const [temp, barOneIndex, barTwoIndex] = animations[i];
+              const barOneStyle = arrayBars[barOneIndex].style;
+              const barTwoStyle = arrayBars[barTwoIndex].style;
+              setTimeout(() => {
+                  barOneStyle.backgroundColor = color;
+                  barTwoStyle.backgroundColor = color;
+              },i * this.state.animationSpeed);
+          }
+          else {
+              const [temp, barIndex, newHeight] = animations[i];
+              const barStyle = arrayBars[barIndex].style;
+              setTimeout(() => {
+                  barStyle.height = `${newHeight}px`;
+              },i * this.state.animationSpeed);  
+          }
+      }
+  }
+
+  insertionSort() {
+
   }
 
   mergeSort() {
@@ -109,45 +187,7 @@ export default class SortingVisualizer extends React.Component {
   }
 
   quickSort() {
-    // We leave it as an exercise to the viewer of this code to implement this method.
-  }
-
-  heapSort() {
-    // We leave it as an exercise to the viewer of this code to implement this method.
-  }
-
-  bubbleSort() {
-    // We leave it as an exercise to the viewer of this code to implement this method.
-  }
-
-  // Select algorithm to be run when an algorithm button is clicked
-  selectSortingAlgorithm(val) {
-    if (val === 0) {
-      this.setState({
-        selectedAlgo: 0,
-        mergeDisabled: true,
-        quickDisabled: false,
-        title: 'Merge Sort'
-      })
-    } else if (val === 1) {
-      this.setState({
-        selectedAlgo: 1,
-        mergeDisabled: false,
-        quickDisabled: true,
-        title: 'Quick Sort'
-      })
-    }
-  }
-
-  // Handler for 'Sort!'
-  runSortingAlgorithm() {
-    if (this.state.selectedAlgo === 0) {
-      this.disableButtons()
-      this.mergeSort()
-    } else if (this.state.selectedAlgo === 1) {
-      this.disableButtons()
-      this.quickSort()
-    }
+    
   }
 
   render() {
@@ -161,12 +201,11 @@ export default class SortingVisualizer extends React.Component {
                   Sorting Algorithm Visualizer
                 </Typography>
                 <Box display='inline' m={3}><Button variant='contained' color='primary' onClick={() => this.resetArray()}>Reset</Button></Box>
-                <Box display='inline' m={1}><Button disabled={this.state.mergeDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(0)}>Merge Sort</Button></Box>
-                <Box display='inline'><Button disabled={this.state.quickDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(1)}>Quick Sort</Button></Box>
-                <Box m={5}>
-                  <SimpleSlider onUpdate={this.updateSpeed}/>
-                </Box>
-                <Box display='inline'><Button disabled={this.state.sortDisabled} variant='contained' color='primary' onClick={() => this.runSortingAlgorithm()}>Sort!</Button></Box>
+                <Box display='inline' m={1}><Button disabled={this.state.selectionDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(0)}>Selection Sort</Button></Box>
+                <Box display='inline' m={1}><Button disabled={this.state.insertionDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(1)}>Insertion Sort</Button></Box>
+                <Box display='inline' m={1}><Button disabled={this.state.mergeDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(2)}>Merge Sort</Button></Box>
+                <Box display='inline' m={1}><Button disabled={this.state.quickDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(3)}>Quick Sort</Button></Box>
+                <Box display='inline' m={3}><Button disabled={this.state.sortDisabled} variant='contained' color='primary' onClick={() => this.runSortingAlgorithm()}>Sort!</Button></Box>
             </Toolbar>
         </AppBar>
 
