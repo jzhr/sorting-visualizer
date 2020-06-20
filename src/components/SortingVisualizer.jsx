@@ -31,6 +31,7 @@ export default class SortingVisualizer extends React.Component {
       array: [],
       title: 'Select a sorting algorithm',
       animationSpeed: 2,
+      resetDisabled: false,
       selectionDisabled: false,
       insertionDisabled: false,
       mergeDisabled: false,
@@ -67,6 +68,7 @@ export default class SortingVisualizer extends React.Component {
 
   disableButtons() {
     this.setState({
+      resetDisabled: true,
       selectionDisabled: true,
       insertionDisabled: true,
       mergeDisabled: true,
@@ -166,6 +168,9 @@ export default class SortingVisualizer extends React.Component {
 
         setTimeout(() => {
           barStyle.backgroundColor = TERTIARY_COLOR;
+          this.setState({
+            resetDisabled: false
+          })
         },i * this.state.animationSpeed);
 
       } else {
@@ -202,6 +207,9 @@ export default class SortingVisualizer extends React.Component {
 
         setTimeout(() => {
           barStyle.backgroundColor = TERTIARY_COLOR;
+          this.setState({
+            resetDisabled: false
+          })
         },i * this.state.animationSpeed);
 
       } else {
@@ -237,6 +245,9 @@ export default class SortingVisualizer extends React.Component {
 
         setTimeout(() => {
           barStyle.backgroundColor = TERTIARY_COLOR;
+          this.setState({
+            resetDisabled: false
+          })
         },i * this.state.animationSpeed);
 
       } else {
@@ -262,12 +273,12 @@ export default class SortingVisualizer extends React.Component {
                 <Typography variant='title' color='inherit'>
                   Sorting Algorithm Visualizer
                 </Typography>
-                <Box display='inline' m={3}><Button variant='contained' color='primary' onClick={() => this.resetArray()}>Reset</Button></Box>
+                <Box display='inline' m={3}><Button disabled={this.state.resetDisabled} variant='contained' color='primary' onClick={() => this.resetArray()}>Reset</Button></Box>
                 <Box display='inline' m={1}><Button disabled={this.state.selectionDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(0)}>Selection Sort</Button></Box>
                 <Box display='inline' m={1}><Button disabled={this.state.insertionDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(1)}>Insertion Sort</Button></Box>
                 <Box display='inline' m={1}><Button disabled={this.state.mergeDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(2)}>Merge Sort</Button></Box>
                 <Box display='inline' m={1}><Button disabled={this.state.quickDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(3)}>Quick Sort</Button></Box>
-                <Box display='inline' m={3}><Button disabled={this.state.sortDisabled} variant='contained' color='primary' onClick={() => this.runSortingAlgorithm()}>Sort!</Button></Box>
+                <Box display='inline' m={3}><Button disabled={this.state.sortDisabled} variant='contained' color='primary.light' onClick={() => this.runSortingAlgorithm()}>Sort!</Button></Box>
             </Toolbar>
         </AppBar>
 
