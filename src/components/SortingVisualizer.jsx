@@ -2,6 +2,7 @@ import React from 'react';
 import {getMergeSortAnimations} from '../sortingAlgorithms/MergeSort.js';
 import {getSelectionSortAnimations} from '../sortingAlgorithms/SelectionSort.js';
 import {getInsertionSortAnimations} from '../sortingAlgorithms/InsertionSort.js';
+import {getQuickSortAnimations} from '../sortingAlgorithms/QuickSort.js';
 import '../styles/SortingVisualizer.css';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
@@ -119,7 +120,7 @@ export default class SortingVisualizer extends React.Component {
       })
     } else if (val === 3) {
       this.setState({
-        selectedAlgo: 2,
+        selectedAlgo: 3,
         selectionDisabled: false,
         insertionDisabled: false,
         mergeDisabled: false,
@@ -262,7 +263,47 @@ export default class SortingVisualizer extends React.Component {
   }
 
   quickSort() {
+    const animations = getQuickSortAnimations(this.state.array);
     
+    for (let i = 0; i < animations.length - 1; i++) {
+      const isColorChange = (i % 6 === 0) || (i % 6 === 1);
+      const arrayBars = document.getElementsByClassName('array-bar');
+
+      if (isColorChange === true && animations[i][0] !== "finished") {
+        const color = (i % 6 === 0) ? SECONDARY_COLOR : PRIMARY_COLOR;
+        const [barOneIndex, barTwoIndex] = animations[i];
+        if(barOneIndex === -1) {
+          continue;
+        }
+        const barOneStyle = arrayBars[barOneIndex].style;
+        const barTwoStyle = arrayBars[barTwoIndex].style;
+        setTimeout(() => {
+          barOneStyle.backgroundColor = color;
+          barTwoStyle.backgroundColor = color;
+        },i * this.state.animationSpeed);
+
+      } else if (animations[i][0] === "finished") {
+        const [temp, barIndex] = animations[i];
+        const barStyle = arrayBars[barIndex].style;
+
+        setTimeout(() => {
+          barStyle.backgroundColor = TERTIARY_COLOR;
+          this.setState({
+            resetDisabled: false
+          })
+        },i * this.state.animationSpeed);
+
+      } else {
+        const [barIndex, newHeight] = animations[i];
+        if (barIndex === -1) {
+          continue;
+        }
+        const barStyle = arrayBars[barIndex].style;
+        setTimeout(() => {
+          barStyle.height = `${newHeight}px`;
+        },i * this.state.animationSpeed);  
+      }
+    }
   }
 
   render() {
