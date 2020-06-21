@@ -226,9 +226,9 @@ export default class SortingVisualizer extends React.Component {
 
   mergeSort() {
     const animations = getMergeSortAnimations(this.state.array);
+    const arrayBars = document.getElementsByClassName('array-bar');
 
     for (let i = 0; i < animations.length; i++) {
-      const arrayBars = document.getElementsByClassName('array-bar');
       const isColorChange = i % 3 !== 2;
 
       if (isColorChange && animations[i][0] !== "finished") {
@@ -265,7 +265,7 @@ export default class SortingVisualizer extends React.Component {
   quickSort() {
     const animations = getQuickSortAnimations(this.state.array);
     
-    for (let i = 0; i < animations.length - 1; i++) {
+    for (let i = 0; i <= animations.length - 1; i++) {
       const isColorChange = (i % 6 === 0) || (i % 6 === 1);
       const arrayBars = document.getElementsByClassName('array-bar');
 
@@ -347,14 +347,4 @@ export default class SortingVisualizer extends React.Component {
 function randomIntFromInterval(min, max) {
   // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-function arraysAreEqual(arrayOne, arrayTwo) {
-  if (arrayOne.length !== arrayTwo.length) return false;
-  for (let i = 0; i < arrayOne.length; i++) {
-    if (arrayOne[i] !== arrayTwo[i]) {
-      return false;
-    }
-  }
-  return true;
 }

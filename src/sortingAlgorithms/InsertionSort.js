@@ -1,11 +1,19 @@
-export function getInsertionSortAnimations(array) {
-    if (array.length <= 1) return array;
+export function getInsertionSortAnimations(array) {  
+      const animations = [];
+      const auxiliaryArray = array.slice();
+      insertionSort(auxiliaryArray, animations);
+
+      for (let i = 0; i <= array.length - 1; i++) {
+        animations.push(["finished", i, i]);
+      }
   
-    const animations = [];
-    let endIdx = array.length - 1;
-    const auxiliaryArray = array.slice();
-  
-    for (let i = 1; i <= endIdx; ++i) {
+      return animations;
+  }
+
+  function insertionSort(auxiliaryArray, animations) {
+      let endIdx = auxiliaryArray.length - 1;
+
+      for (let i = 1; i <= endIdx; ++i) {
         // Find minimum element in unsorted array
         let key = auxiliaryArray[i];
         let j = i - 1;
@@ -26,11 +34,5 @@ export function getInsertionSortAnimations(array) {
         }
         animations.push(["overwrite", j + 1, key]);
         auxiliaryArray[j + 1] = key;
-    }
-
-    for (let i = 0; i <= endIdx; i++) {
-        animations.push(["finished", i, i]);
-    }
-
-    return animations;
+      }
   }

@@ -1,10 +1,19 @@
-export function getSelectionSortAnimations(array) {
-    if (array.length <= 1) return array;
-  
+export function getSelectionSortAnimations(array) {  
     const animations = [];
-    let endIdx = array.length - 1;
     const auxiliaryArray = array.slice();
+
+    selectionSort(auxiliaryArray, animations);
   
+    for (let i = 0; i <= array.length - 1; i++) {
+      animations.push(["finished", i, i]);
+  }
+
+    return animations;
+}
+
+function selectionSort(auxiliaryArray, animations) {
+    let endIdx = auxiliaryArray.length - 1;
+
     for (let i = 0; i <= endIdx; i++) {
         // Find minimum element in unsorted array
         let min_idx = i;
@@ -15,7 +24,6 @@ export function getSelectionSortAnimations(array) {
                 min_idx = j;
             }
         }
-    
         // Swap min element with i-th element
         animations.push(["swap", min_idx, auxiliaryArray[i]]);
         animations.push(["swap", i, auxiliaryArray[min_idx]]);
@@ -24,10 +32,4 @@ export function getSelectionSortAnimations(array) {
         auxiliaryArray[min_idx] = auxiliaryArray[i];
         auxiliaryArray[i] = min;
     }
-    
-    for (let i = 0; i <= endIdx; i++) {
-        animations.push(["finished", i, i]);
-    }
-
-    return animations;
-  }
+}
