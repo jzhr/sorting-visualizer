@@ -43,6 +43,7 @@ export default class SortingVisualizer extends React.Component {
   }
 
   componentDidMount() {
+    document.title = 'Sorting Visualizer';
     this.resetArray();
   }
 
