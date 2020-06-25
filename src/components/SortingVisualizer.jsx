@@ -2,6 +2,7 @@ import React from 'react';
 import {getMergeSortAnimations} from '../sortingAlgorithms/MergeSort.js';
 import {getSelectionSortAnimations} from '../sortingAlgorithms/SelectionSort.js';
 import {getInsertionSortAnimations} from '../sortingAlgorithms/InsertionSort.js';
+import {getBubbleSortAnimations} from '../sortingAlgorithms/BubbleSort.js';
 import {getQuickSortAnimations} from '../sortingAlgorithms/QuickSort.js';
 import '../styles/SortingVisualizer.css';
 import Button from '@material-ui/core/Button';
@@ -35,6 +36,7 @@ export default class SortingVisualizer extends React.Component {
       resetDisabled: false,
       selectionDisabled: false,
       insertionDisabled: false,
+      bubbleDisabled: false,
       mergeDisabled: false,
       quickDisabled: false,
       sortDisabled: false,
@@ -73,6 +75,7 @@ export default class SortingVisualizer extends React.Component {
       resetDisabled: true,
       selectionDisabled: true,
       insertionDisabled: true,
+      bubbleDisabled: true,
       mergeDisabled: true,
       quickDisabled: true,
       sortDisabled: true,
@@ -83,6 +86,7 @@ export default class SortingVisualizer extends React.Component {
     this.setState({
       selectionDisabled: false,
       insertionDisabled: false,
+      bubbleDisabled: false,
       mergeDisabled: false,
       quickDisabled: false,
       sortDisabled: false,
@@ -96,6 +100,7 @@ export default class SortingVisualizer extends React.Component {
         selectedAlgo: 0,
         selectionDisabled: true,
         insertionDisabled: false,
+        bubbleDisabled: false,
         mergeDisabled: false,
         quickDisabled: false,
         title: 'Selection Sort'
@@ -105,6 +110,7 @@ export default class SortingVisualizer extends React.Component {
         selectedAlgo: 1,
         selectionDisabled: false,
         insertionDisabled: true,
+        bubbleDisabled: false,
         mergeDisabled: false,
         quickDisabled: false,
         title: 'Insertion Sort'
@@ -114,15 +120,27 @@ export default class SortingVisualizer extends React.Component {
         selectedAlgo: 2,
         selectionDisabled: false,
         insertionDisabled: false,
-        mergeDisabled: true,
+        bubbleDisabled: true,
+        mergeDisabled: false,
         quickDisabled: false,
-        title: 'Merge Sort'
+        title: 'Bubble Sort'
       })
     } else if (val === 3) {
       this.setState({
         selectedAlgo: 3,
         selectionDisabled: false,
         insertionDisabled: false,
+        bubbleDisabled: false,
+        mergeDisabled: true,
+        quickDisabled: false,
+        title: 'Merge Sort'
+      })
+    } else if (val === 4) {
+      this.setState({
+        selectedAlgo: 4,
+        selectionDisabled: false,
+        insertionDisabled: false,
+        bubbleDisabled: false,
         mergeDisabled: false,
         quickDisabled: true,
         title: 'Quick Sort'
@@ -140,8 +158,11 @@ export default class SortingVisualizer extends React.Component {
       this.insertionSort()
     } else if (this.state.selectedAlgo === 2) {
       this.disableButtons()
-      this.mergeSort()
+      this.bubbleSort()
     } else if (this.state.selectedAlgo === 3) {
+      this.disableButtons()
+      this.mergeSort()
+    } else if (this.state.selectedAlgo === 4) {
       this.disableButtons()
       this.quickSort()
     }
@@ -224,6 +245,47 @@ export default class SortingVisualizer extends React.Component {
     }
   }
 
+  bubbleSort() {
+    const animations = getBubbleSortAnimations(this.state.array);
+    const arrayBars = document.getElementsByClassName('array-bar');
+
+        for (let i = 0; i < animations.length; i++) {
+            const isColorChange = (i % 4 === 0) || (i % 4 === 1);
+            
+            if(isColorChange === true && animations[i][0] !== "finished") {
+              const color = (i % 4 === 0) ? SECONDARY_COLOR : PRIMARY_COLOR;
+              const [barOneIndex, barTwoIndex] = animations[i];
+              const barOneStyle = arrayBars[barOneIndex].style;
+              const barTwoStyle = arrayBars[barTwoIndex].style;
+                setTimeout(() => {
+                  barOneStyle.backgroundColor = color;
+                  barTwoStyle.backgroundColor = color;
+                },i * this.state.animationSpeed);
+
+            } else if (animations[i][0] === "finished") {
+              const [temp, barIndex] = animations[i];
+              const barStyle = arrayBars[barIndex].style;
+      
+              setTimeout(() => {
+                barStyle.backgroundColor = TERTIARY_COLOR;
+                this.setState({
+                  resetDisabled: false
+                })
+              },i * this.state.animationSpeed);
+
+            } else {
+                const [barIndex, newHeight] = animations[i];
+                if (barIndex === -1) {
+                  continue;
+                }
+                const barStyle = arrayBars[barIndex].style;
+                setTimeout(() => {
+                  barStyle.height = `${newHeight}px`;
+                },i * this.state.animationSpeed);  
+            }
+        }
+  }
+
   mergeSort() {
     const animations = getMergeSortAnimations(this.state.array);
     const arrayBars = document.getElementsByClassName('array-bar');
@@ -264,10 +326,10 @@ export default class SortingVisualizer extends React.Component {
 
   quickSort() {
     const animations = getQuickSortAnimations(this.state.array);
+    const arrayBars = document.getElementsByClassName('array-bar');
     
     for (let i = 0; i <= animations.length - 1; i++) {
       const isColorChange = (i % 6 === 0) || (i % 6 === 1);
-      const arrayBars = document.getElementsByClassName('array-bar');
 
       if (isColorChange === true && animations[i][0] !== "finished") {
         const color = (i % 6 === 0) ? SECONDARY_COLOR : PRIMARY_COLOR;
@@ -318,8 +380,9 @@ export default class SortingVisualizer extends React.Component {
                 <Box display='inline' m={3}><Button disabled={this.state.resetDisabled} variant='contained' color='primary' onClick={() => this.resetArray()}>Reset</Button></Box>
                 <Box display='inline' m={1}><Button disabled={this.state.selectionDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(0)}>Selection Sort</Button></Box>
                 <Box display='inline' m={1}><Button disabled={this.state.insertionDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(1)}>Insertion Sort</Button></Box>
-                <Box display='inline' m={1}><Button disabled={this.state.mergeDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(2)}>Merge Sort</Button></Box>
-                <Box display='inline' m={1}><Button disabled={this.state.quickDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(3)}>Quick Sort</Button></Box>
+                <Box display='inline' m={1}><Button disabled={this.state.bubbleDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(2)}>Bubble Sort</Button></Box>
+                <Box display='inline' m={1}><Button disabled={this.state.mergeDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(3)}>Merge Sort</Button></Box>
+                <Box display='inline' m={1}><Button disabled={this.state.quickDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(4)}>Quick Sort</Button></Box>
                 <Box display='inline' m={3}><Button disabled={this.state.sortDisabled} variant='contained' color='primary.light' onClick={() => this.runSortingAlgorithm()}>Sort!</Button></Box>
             </Toolbar>
         </AppBar>
