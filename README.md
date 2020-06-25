@@ -1,3 +1,8 @@
+# Sorting Visualizer
+A visualization for various sorting algorithms.<br>
+You can try it out here: https://jzhr.github.io/sorting-visualizer/
+![](sorting.gif)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
