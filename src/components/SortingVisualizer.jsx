@@ -11,6 +11,8 @@ import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography'
 import Toolbar from '@material-ui/core/Toolbar';
 import {Title} from './Title'
+import SimpleSlider from './Slider';
+import { connect } from 'react-redux';
 
 // Number of bars (value) in the array
 const NUMBER_OF_ARRAY_BARS = 100;
@@ -24,7 +26,7 @@ const SECONDARY_COLOR = '#ff6961';
 // Color of array bars after sorting
 const TERTIARY_COLOR = '#77dd77';
 
-export default class SortingVisualizer extends React.Component {
+class SortingVisualizer extends React.Component {
 
   constructor(props) {
     super(props);
@@ -32,7 +34,6 @@ export default class SortingVisualizer extends React.Component {
     this.state = {
       array: [],
       title: 'Select a sorting algorithm',
-      animationSpeed: 2,
       resetDisabled: false,
       selectionDisabled: false,
       insertionDisabled: false,
@@ -183,7 +184,7 @@ export default class SortingVisualizer extends React.Component {
         setTimeout(() => {
           barOneStyle.backgroundColor = color;
           barTwoStyle.backgroundColor = color;
-        },i * this.state.animationSpeed);
+        },i * this.props.sliderSpeed.value);
 
       } else if (animations[i][0] === "finished") {
         const [temp, barIndex, temp2] = animations[i];
@@ -194,14 +195,14 @@ export default class SortingVisualizer extends React.Component {
           this.setState({
             resetDisabled: false
           })
-        },i * this.state.animationSpeed);
+        },i * this.props.sliderSpeed.value);
 
       } else {
         const [temp, barIndex, newHeight] = animations[i];
         const barStyle = arrayBars[barIndex].style;
         setTimeout(() => {
           barStyle.height = `${newHeight}px`;
-        },i * this.state.animationSpeed);  
+        },i * this.props.sliderSpeed.value);  
       }
     }
   }
@@ -222,7 +223,7 @@ export default class SortingVisualizer extends React.Component {
         setTimeout(() => {
           barOneStyle.backgroundColor = color;
           barTwoStyle.backgroundColor = color;
-        },i * this.state.animationSpeed);
+        },i * this.props.sliderSpeed.value);
 
       } else if (animations[i][0] === "finished") {
         const [temp, barIndex, temp2] = animations[i];
@@ -233,14 +234,14 @@ export default class SortingVisualizer extends React.Component {
           this.setState({
             resetDisabled: false
           })
-        },i * this.state.animationSpeed);
+        },i * this.props.sliderSpeed.value);
 
       } else {
         const [temp, barIndex, newHeight] = animations[i];
         const barStyle = arrayBars[barIndex].style;
         setTimeout(() => {
           barStyle.height = `${newHeight}px`;
-        },i * this.state.animationSpeed);
+        },i * this.props.sliderSpeed.value);
       }
     }
   }
@@ -260,7 +261,7 @@ export default class SortingVisualizer extends React.Component {
                 setTimeout(() => {
                   barOneStyle.backgroundColor = color;
                   barTwoStyle.backgroundColor = color;
-                },i * this.state.animationSpeed);
+                },i * this.props.sliderSpeed.value);
 
             } else if (animations[i][0] === "finished") {
               const [temp, barIndex] = animations[i];
@@ -271,7 +272,7 @@ export default class SortingVisualizer extends React.Component {
                 this.setState({
                   resetDisabled: false
                 })
-              },i * this.state.animationSpeed);
+              },i * this.props.sliderSpeed.value);
 
             } else {
                 const [barIndex, newHeight] = animations[i];
@@ -281,7 +282,7 @@ export default class SortingVisualizer extends React.Component {
                 const barStyle = arrayBars[barIndex].style;
                 setTimeout(() => {
                   barStyle.height = `${newHeight}px`;
-                },i * this.state.animationSpeed);  
+                },i * this.props.sliderSpeed.value);  
             }
         }
   }
@@ -301,7 +302,7 @@ export default class SortingVisualizer extends React.Component {
         setTimeout(() => {
           barOneStyle.backgroundColor = color;
           barTwoStyle.backgroundColor = color;
-        }, i * this.state.animationSpeed);
+        }, i * this.props.sliderSpeed.value);
 
       } else if (animations[i][0] === "finished") {
         const [temp, barIndex] = animations[i];
@@ -312,14 +313,14 @@ export default class SortingVisualizer extends React.Component {
           this.setState({
             resetDisabled: false
           })
-        },i * this.state.animationSpeed);
+        },i * this.props.sliderSpeed.value);
 
       } else {
         setTimeout(() => {
           const [barOneIdx, newHeight] = animations[i];
           const barOneStyle = arrayBars[barOneIdx].style;
           barOneStyle.height = `${newHeight}px`;
-        }, i * this.state.animationSpeed);
+        }, i * this.props.sliderSpeed.value);
       }
     }
   }
@@ -342,7 +343,7 @@ export default class SortingVisualizer extends React.Component {
         setTimeout(() => {
           barOneStyle.backgroundColor = color;
           barTwoStyle.backgroundColor = color;
-        },i * this.state.animationSpeed);
+        },i * this.props.sliderSpeed.value);
 
       } else if (animations[i][0] === "finished") {
         const [temp, barIndex] = animations[i];
@@ -353,7 +354,7 @@ export default class SortingVisualizer extends React.Component {
           this.setState({
             resetDisabled: false
           })
-        },i * this.state.animationSpeed);
+        },i * this.props.sliderSpeed.value);
 
       } else {
         const [barIndex, newHeight] = animations[i];
@@ -363,10 +364,11 @@ export default class SortingVisualizer extends React.Component {
         const barStyle = arrayBars[barIndex].style;
         setTimeout(() => {
           barStyle.height = `${newHeight}px`;
-        },i * this.state.animationSpeed);  
+        },i * this.props.sliderSpeed.value);  
       }
     }
   }
+
 
   render() {
     const {array} = this.state;
@@ -384,6 +386,10 @@ export default class SortingVisualizer extends React.Component {
                 <Box display='inline' m={1}><Button disabled={this.state.mergeDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(3)}>Merge Sort</Button></Box>
                 <Box display='inline' m={1}><Button disabled={this.state.quickDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(4)}>Quick Sort</Button></Box>
                 <Box display='inline' m={3}><Button disabled={this.state.sortDisabled} variant='contained' color='primary.light' onClick={() => this.runSortingAlgorithm()}>Sort!</Button></Box>
+            
+                <Box m={5}>
+                  <SimpleSlider/>
+                </Box>
             </Toolbar>
         </AppBar>
 
@@ -401,7 +407,6 @@ export default class SortingVisualizer extends React.Component {
           ))}
         </div>
       </div>
-      
     );
   }
 }
@@ -411,3 +416,11 @@ function randomIntFromInterval(min, max) {
   // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
+
+const mapStateToProps = (state) => {
+  return {
+    sliderSpeed: state.speedReducer
+  };
+};
+
+export default connect(mapStateToProps)(SortingVisualizer)
