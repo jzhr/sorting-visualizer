@@ -7,16 +7,18 @@ import * as serviceWorker from './serviceWorker';
 import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import speedReducer from './reducers/speedReducer';
+import inputReducer from './reducers/inputReducer';
 
 const store = createStore(
   combineReducers({
-    speedReducer
+    sliderSpeed: speedReducer,
+    inputSize: inputReducer
   })
 );
 
-store.subscribe(() => {
-  console.log("Store updated!", store.getState());
-});
+// store.subscribe(() => {
+//   console.log("Store updated!", store.getState());
+// });
 
 ReactDOM.render(
   <Provider store={store}>

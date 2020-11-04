@@ -11,11 +11,9 @@ import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography'
 import Toolbar from '@material-ui/core/Toolbar';
 import {Title} from './Title'
-import SimpleSlider from './Slider';
+import SpeedSlider from './SpeedSlider';
+import InputSlider from './InputSlider';
 import { connect } from 'react-redux';
-
-// Number of bars (value) in the array
-const NUMBER_OF_ARRAY_BARS = 100;
 
 // Main color of the array bars
 const PRIMARY_COLOR = '#aec6cf';
@@ -29,7 +27,7 @@ const TERTIARY_COLOR = '#77dd77';
 class SortingVisualizer extends React.Component {
 
   constructor(props) {
-    super(props);
+    super();
 
     this.state = {
       array: [],
@@ -41,6 +39,7 @@ class SortingVisualizer extends React.Component {
       mergeDisabled: false,
       quickDisabled: false,
       sortDisabled: false,
+      sliderDisabled: false,
       // Default selected sorting algorithm (0: merge)
       selectedAlgo: -1,
     };
@@ -51,6 +50,12 @@ class SortingVisualizer extends React.Component {
     this.resetArray();
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.inputSize.value !== prevProps.inputSize.value) {
+      this.resetArray();
+    }
+  }
+
   resetArray() {
     this.setState({
       title: 'Select a sorting algorithm'
@@ -59,7 +64,7 @@ class SortingVisualizer extends React.Component {
     this.enableButtons()
 
     const array = [];
-    for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
+    for (let i = 0; i < this.props.inputSize.value; i++) {
       array.push(randomIntFromInterval(50, 650));
     }
 
@@ -80,7 +85,8 @@ class SortingVisualizer extends React.Component {
       mergeDisabled: true,
       quickDisabled: true,
       sortDisabled: true,
-    })
+      sliderDisabled: true,
+    });
   }
 
   enableButtons(){
@@ -91,7 +97,8 @@ class SortingVisualizer extends React.Component {
       mergeDisabled: false,
       quickDisabled: false,
       sortDisabled: false,
-    })
+      sliderDisabled: false,
+    });
   }
 
   // Select algorithm to be run when an algorithm button is clicked
@@ -152,20 +159,20 @@ class SortingVisualizer extends React.Component {
   // Handler for 'Sort!' button
   runSortingAlgorithm() {
     if (this.state.selectedAlgo === 0) {
-      this.disableButtons()
-      this.selectionSort()
+      this.disableButtons();
+      this.selectionSort();
     } else if (this.state.selectedAlgo === 1) {
-      this.disableButtons()
-      this.insertionSort()
+      this.disableButtons();
+      this.insertionSort();
     } else if (this.state.selectedAlgo === 2) {
-      this.disableButtons()
-      this.bubbleSort()
+      this.disableButtons();
+      this.bubbleSort();
     } else if (this.state.selectedAlgo === 3) {
-      this.disableButtons()
-      this.mergeSort()
+      this.disableButtons();
+      this.mergeSort();
     } else if (this.state.selectedAlgo === 4) {
-      this.disableButtons()
-      this.quickSort()
+      this.disableButtons();
+      this.quickSort();
     }
   }
 
@@ -388,7 +395,10 @@ class SortingVisualizer extends React.Component {
                 <Box display='inline' m={3}><Button disabled={this.state.sortDisabled} variant='contained' color='primary.light' onClick={() => this.runSortingAlgorithm()}>Sort!</Button></Box>
             
                 <Box m={5}>
-                  <SimpleSlider/>
+                  <SpeedSlider isDisabled={this.state.sliderDisabled}/>
+                </Box>
+                <Box m={5}>
+                  <InputSlider isDisabled={this.state.sliderDisabled}/>
                 </Box>
             </Toolbar>
         </AppBar>
@@ -419,7 +429,8 @@ function randomIntFromInterval(min, max) {
 
 const mapStateToProps = (state) => {
   return {
-    sliderSpeed: state.speedReducer
+    sliderSpeed: state.sliderSpeed,
+    inputSize: state.inputSize
   };
 };
 

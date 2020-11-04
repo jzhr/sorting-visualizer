@@ -21,42 +21,28 @@ const mainTheme = createMuiTheme({
     }
   }
 });
-
-const sliderMarks = [{
-    value: 1,
-    label: 'Fast'
-  },
-  {
-    value: 5,
-    label: 'Medium'
-  },
-  {
-    value: 10,
-    label: 'Slow'
-  },
-];
-
   
-class SimpleSlider extends React.Component {
+class InputSlider extends React.Component {
   handleChange = (event, value) => {
-    this.props.setSpeed(value);
+    this.props.setInput(value);
   };
 
   render() {
     return (
       <div>
         <ThemeProvider theme={mainTheme}>
-          <Typography id='label' color='primary'>Animation Speed</Typography>
+          <Typography id='label' color='primary'>Input Size</Typography>
           <Slider
-            value={this.props.sliderSpeed.value}
+            value={this.props.inputSize.value}
             aria-labelledby='label'
             onChange={this.handleChange}
             color='primary'
-            marks={sliderMarks}
-            min={1}
-            max={10}
-            step={null}
+            disabled={this.props.isDisabled}
+            min={50}
+            max={350}
+            step={5}
             track={false}
+            valueLabelDisplay="auto"
           />
         </ThemeProvider>
       </div>
@@ -66,19 +52,19 @@ class SimpleSlider extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        sliderSpeed: state.speedReducer
+        inputSize: state.inputSize
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setSpeed: (value) => {
+        setInput: (value) => {
             dispatch({
-                type: "SET_SPEED",
+                type: "SET_INPUT",
                 payload: value
             });
         },
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SimpleSlider)
+export default connect(mapStateToProps, mapDispatchToProps)(InputSlider)
