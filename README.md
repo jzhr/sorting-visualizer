@@ -3,9 +3,6 @@
 
 A visualizer for various sorting algorithms built with React/Redux.<br>
 You can try it out here: https://jzhr.github.io/sorting-visualizer/
-![](sorting.gif)
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
 
