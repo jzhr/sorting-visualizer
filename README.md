@@ -2,6 +2,7 @@
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://jzhr.github.io/sorting-visualizer)
 
 A visualization tool to compare different sorting algorithms.
+
 You can try it out here: https://jzhr.github.io/sorting-visualizer/
 
 ## Available Scripts
