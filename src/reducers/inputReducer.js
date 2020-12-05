@@ -1,5 +1,5 @@
 const initialState = {
-  value: 200
+  value: 50
 };
 
 const inputReducer = (state = initialState, action) => {

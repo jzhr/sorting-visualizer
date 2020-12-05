@@ -12,7 +12,7 @@ import inputReducer from './reducers/inputReducer';
 const store = createStore(
   combineReducers({
     sliderSpeed: speedReducer,
-    inputSize: inputReducer
+    inputSize: inputReducer,
   })
 );
 

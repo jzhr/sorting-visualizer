@@ -1,34 +1,40 @@
 import React from 'react';
-import {getMergeSortAnimations} from '../sortingAlgorithms/MergeSort.js';
-import {getSelectionSortAnimations} from '../sortingAlgorithms/SelectionSort.js';
-import {getInsertionSortAnimations} from '../sortingAlgorithms/InsertionSort.js';
-import {getBubbleSortAnimations} from '../sortingAlgorithms/BubbleSort.js';
-import {getQuickSortAnimations} from '../sortingAlgorithms/QuickSort.js';
-import '../styles/SortingVisualizer.css';
+import { connect } from 'react-redux';
+import {Title} from './Title'
+import SpeedSlider from './SpeedSlider';
+import InputSlider from './InputSlider';
+import { selectionSort, insertionSort, bubbleSort, mergeSort, quickSort } from '../sortingAlgorithms/Util';
+
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography'
 import Toolbar from '@material-ui/core/Toolbar';
-import {Title} from './Title'
-import SpeedSlider from './SpeedSlider';
-import InputSlider from './InputSlider';
-import { connect } from 'react-redux';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import '../styles/SortingVisualizer.css';
 
-// Main color of the array bars
-const PRIMARY_COLOR = '#aec6cf';
-
-// Color of array bars that are being compared throughout the animations
-const SECONDARY_COLOR = '#ff6961';
-
-// Color of array bars after sorting
-const TERTIARY_COLOR = '#77dd77';
+const theme = createMuiTheme({
+  palette: {
+    action: {
+      disabledBackground: '#122335',
+      disabled: '#c1c1c1'
+    },
+    primary: {
+      light: '#1a3d4d',
+      main: '#0d1a27',
+      dark: '#1c3652',
+    },
+    secondary: {
+      main: '#e7e7e7',
+      dark: '#89ff89',
+    },
+  },
+});
 
 class SortingVisualizer extends React.Component {
 
   constructor(props) {
     super();
-
     this.state = {
       array: [],
       title: 'Select a sorting algorithm',
@@ -62,17 +68,16 @@ class SortingVisualizer extends React.Component {
     });
 
     this.enableButtons()
-
     const array = [];
+
     for (let i = 0; i < this.props.inputSize.value; i++) {
       array.push(randomIntFromInterval(50, 650));
     }
 
     const arrayBars = document.getElementsByClassName('array-bar');
     for (let i = 0; i < arrayBars.length; i++) {
-      arrayBars[i].style.backgroundColor = PRIMARY_COLOR;
+      arrayBars[i].style.backgroundColor = '#aec6cf';
     }
-
     this.setState({array});
   }
 
@@ -158,265 +163,84 @@ class SortingVisualizer extends React.Component {
 
   // Handler for 'Sort!' button
   runSortingAlgorithm() {
+    const arr = this.state.array;
+    const speed = this.props.sliderSpeed.value;
+
     if (this.state.selectedAlgo === 0) {
       this.disableButtons();
-      this.selectionSort();
+      selectionSort(this.setState.bind(this), arr, speed);
     } else if (this.state.selectedAlgo === 1) {
       this.disableButtons();
-      this.insertionSort();
+      insertionSort(this.setState.bind(this), arr, speed);
     } else if (this.state.selectedAlgo === 2) {
       this.disableButtons();
-      this.bubbleSort();
+      bubbleSort(this.setState.bind(this), arr, speed);
     } else if (this.state.selectedAlgo === 3) {
       this.disableButtons();
-      this.mergeSort();
+      mergeSort(this.setState.bind(this), arr, speed);
     } else if (this.state.selectedAlgo === 4) {
       this.disableButtons();
-      this.quickSort();
+      quickSort(this.setState.bind(this), arr, speed);
     }
   }
-
-  selectionSort() {
-    const animations = getSelectionSortAnimations(this.state.array);
-
-    for (let i = 0; i < animations.length; i++) {
-      const isColorChange = (animations[i][0] === "comparison1") || (animations[i][0] === "comparison2");
-      const arrayBars = document.getElementsByClassName('array-bar');
-
-      if(isColorChange === true) {
-        const color = (animations[i][0] === "comparison1") ? SECONDARY_COLOR : PRIMARY_COLOR;
-        const [temp, barOneIndex, barTwoIndex] = animations[i];
-        const barOneStyle = arrayBars[barOneIndex].style;
-        const barTwoStyle = arrayBars[barTwoIndex].style;
-        setTimeout(() => {
-          barOneStyle.backgroundColor = color;
-          barTwoStyle.backgroundColor = color;
-        },i * this.props.sliderSpeed.value);
-
-      } else if (animations[i][0] === "finished") {
-        const [temp, barIndex, temp2] = animations[i];
-        const barStyle = arrayBars[barIndex].style;
-
-        setTimeout(() => {
-          barStyle.backgroundColor = TERTIARY_COLOR;
-          this.setState({
-            resetDisabled: false
-          })
-        },i * this.props.sliderSpeed.value);
-
-      } else {
-        const [temp, barIndex, newHeight] = animations[i];
-        const barStyle = arrayBars[barIndex].style;
-        setTimeout(() => {
-          barStyle.height = `${newHeight}px`;
-        },i * this.props.sliderSpeed.value);  
-      }
-    }
-  }
-
-  insertionSort() {
-    const animations = getInsertionSortAnimations(this.state.array);
-    const arrayBars = document.getElementsByClassName('array-bar');
-
-    for (let i = 0; i < animations.length; i++) {
-      const isColorChange = (animations[i][0] === "comparison1") || (animations[i][0] === "comparison2");
-      
-      if(isColorChange === true) {
-        const color = (animations[i][0] === "comparison1") ? SECONDARY_COLOR : PRIMARY_COLOR;
-        const [temp, barOneIndex, barTwoIndex] = animations[i];
-        const barOneStyle = arrayBars[barOneIndex].style;
-        const barTwoStyle = arrayBars[barTwoIndex].style;
-        
-        setTimeout(() => {
-          barOneStyle.backgroundColor = color;
-          barTwoStyle.backgroundColor = color;
-        },i * this.props.sliderSpeed.value);
-
-      } else if (animations[i][0] === "finished") {
-        const [temp, barIndex, temp2] = animations[i];
-        const barStyle = arrayBars[barIndex].style;
-
-        setTimeout(() => {
-          barStyle.backgroundColor = TERTIARY_COLOR;
-          this.setState({
-            resetDisabled: false
-          })
-        },i * this.props.sliderSpeed.value);
-
-      } else {
-        const [temp, barIndex, newHeight] = animations[i];
-        const barStyle = arrayBars[barIndex].style;
-        setTimeout(() => {
-          barStyle.height = `${newHeight}px`;
-        },i * this.props.sliderSpeed.value);
-      }
-    }
-  }
-
-  bubbleSort() {
-    const animations = getBubbleSortAnimations(this.state.array);
-    const arrayBars = document.getElementsByClassName('array-bar');
-
-        for (let i = 0; i < animations.length; i++) {
-            const isColorChange = (i % 4 === 0) || (i % 4 === 1);
-            
-            if(isColorChange === true && animations[i][0] !== "finished") {
-              const color = (i % 4 === 0) ? SECONDARY_COLOR : PRIMARY_COLOR;
-              const [barOneIndex, barTwoIndex] = animations[i];
-              const barOneStyle = arrayBars[barOneIndex].style;
-              const barTwoStyle = arrayBars[barTwoIndex].style;
-                setTimeout(() => {
-                  barOneStyle.backgroundColor = color;
-                  barTwoStyle.backgroundColor = color;
-                },i * this.props.sliderSpeed.value);
-
-            } else if (animations[i][0] === "finished") {
-              const [temp, barIndex] = animations[i];
-              const barStyle = arrayBars[barIndex].style;
-      
-              setTimeout(() => {
-                barStyle.backgroundColor = TERTIARY_COLOR;
-                this.setState({
-                  resetDisabled: false
-                })
-              },i * this.props.sliderSpeed.value);
-
-            } else {
-                const [barIndex, newHeight] = animations[i];
-                if (barIndex === -1) {
-                  continue;
-                }
-                const barStyle = arrayBars[barIndex].style;
-                setTimeout(() => {
-                  barStyle.height = `${newHeight}px`;
-                },i * this.props.sliderSpeed.value);  
-            }
-        }
-  }
-
-  mergeSort() {
-    const animations = getMergeSortAnimations(this.state.array);
-    const arrayBars = document.getElementsByClassName('array-bar');
-
-    for (let i = 0; i < animations.length; i++) {
-      const isColorChange = i % 3 !== 2;
-
-      if (isColorChange && animations[i][0] !== "finished") {
-        const [barOneIdx, barTwoIdx] = animations[i];
-        const barOneStyle = arrayBars[barOneIdx].style;
-        const barTwoStyle = arrayBars[barTwoIdx].style;
-        const color = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
-        setTimeout(() => {
-          barOneStyle.backgroundColor = color;
-          barTwoStyle.backgroundColor = color;
-        }, i * this.props.sliderSpeed.value);
-
-      } else if (animations[i][0] === "finished") {
-        const [temp, barIndex] = animations[i];
-        const barStyle = arrayBars[barIndex].style;
-
-        setTimeout(() => {
-          barStyle.backgroundColor = TERTIARY_COLOR;
-          this.setState({
-            resetDisabled: false
-          })
-        },i * this.props.sliderSpeed.value);
-
-      } else {
-        setTimeout(() => {
-          const [barOneIdx, newHeight] = animations[i];
-          const barOneStyle = arrayBars[barOneIdx].style;
-          barOneStyle.height = `${newHeight}px`;
-        }, i * this.props.sliderSpeed.value);
-      }
-    }
-  }
-
-  quickSort() {
-    const animations = getQuickSortAnimations(this.state.array);
-    const arrayBars = document.getElementsByClassName('array-bar');
-    
-    for (let i = 0; i <= animations.length - 1; i++) {
-      const isColorChange = (i % 6 === 0) || (i % 6 === 1);
-
-      if (isColorChange === true && animations[i][0] !== "finished") {
-        const color = (i % 6 === 0) ? SECONDARY_COLOR : PRIMARY_COLOR;
-        const [barOneIndex, barTwoIndex] = animations[i];
-        if(barOneIndex === -1) {
-          continue;
-        }
-        const barOneStyle = arrayBars[barOneIndex].style;
-        const barTwoStyle = arrayBars[barTwoIndex].style;
-        setTimeout(() => {
-          barOneStyle.backgroundColor = color;
-          barTwoStyle.backgroundColor = color;
-        },i * this.props.sliderSpeed.value);
-
-      } else if (animations[i][0] === "finished") {
-        const [temp, barIndex] = animations[i];
-        const barStyle = arrayBars[barIndex].style;
-
-        setTimeout(() => {
-          barStyle.backgroundColor = TERTIARY_COLOR;
-          this.setState({
-            resetDisabled: false
-          })
-        },i * this.props.sliderSpeed.value);
-
-      } else {
-        const [barIndex, newHeight] = animations[i];
-        if (barIndex === -1) {
-          continue;
-        }
-        const barStyle = arrayBars[barIndex].style;
-        setTimeout(() => {
-          barStyle.height = `${newHeight}px`;
-        },i * this.props.sliderSpeed.value);  
-      }
-    }
-  }
-
 
   render() {
     const {array} = this.state;
+    const styles = {
+      resetButton: {
+        backgroundColor: theme.palette.secondary.dark,
+        color: theme.palette.primary.main
+      },
+      stopButton: {
+        backgroundColor: theme.palette.error.main,
+        color: theme.palette.primary.main
+      }
+    }
+  
     return (
-      <div className='container'>
-        <AppBar position='static'>
-            <Toolbar>
-                <Typography variant='title' color='inherit'>
-                  Sorting Algorithm Visualizer
-                </Typography>
-                <Box display='inline' m={3}><Button disabled={this.state.resetDisabled} variant='contained' color='primary' onClick={() => this.resetArray()}>Reset</Button></Box>
-                <Box display='inline' m={1}><Button disabled={this.state.selectionDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(0)}>Selection Sort</Button></Box>
-                <Box display='inline' m={1}><Button disabled={this.state.insertionDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(1)}>Insertion Sort</Button></Box>
-                <Box display='inline' m={1}><Button disabled={this.state.bubbleDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(2)}>Bubble Sort</Button></Box>
-                <Box display='inline' m={1}><Button disabled={this.state.mergeDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(3)}>Merge Sort</Button></Box>
-                <Box display='inline' m={1}><Button disabled={this.state.quickDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(4)}>Quick Sort</Button></Box>
-                <Box display='inline' m={3}><Button disabled={this.state.sortDisabled} variant='contained' color='primary.light' onClick={() => this.runSortingAlgorithm()}>Sort!</Button></Box>
-            
-                <Box m={5}>
-                  <SpeedSlider isDisabled={this.state.sliderDisabled}/>
-                </Box>
-                <Box m={5}>
-                  <InputSlider isDisabled={this.state.sliderDisabled}/>
-                </Box>
-            </Toolbar>
-        </AppBar>
+        <div className='container'>
+          <ThemeProvider theme={theme}>
+            <AppBar position='static'>
+                <Toolbar>
+                    <ThemeProvider theme={theme}>
+                      <Typography variant='title' color='secondary'>
+                        <a href="https://github.com/jzhr/sorting-visualizer" className="sourcelink">Sorting Algorithm Visualizer</a>
+                      </Typography>
+                    </ThemeProvider>
+                    
+                    <Box display='inline' m={3}><Button disabled={this.state.resetDisabled} variant='contained' color='primary' onClick={() => this.resetArray()}>Reset</Button></Box>
+                    <Box display='inline' m={1}><Button disabled={this.state.selectionDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(0)}>Selection Sort</Button></Box>
+                    <Box display='inline' m={1}><Button disabled={this.state.insertionDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(1)}>Insertion Sort</Button></Box>
+                    <Box display='inline' m={1}><Button disabled={this.state.bubbleDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(2)}>Bubble Sort</Button></Box>
+                    <Box display='inline' m={1}><Button disabled={this.state.mergeDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(3)}>Merge Sort</Button></Box>
+                    <Box display='inline' m={1}><Button disabled={this.state.quickDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(4)}>Quick Sort</Button></Box>
+                    <Box display='inline' m={3}><Button disabled={this.state.sortDisabled} variant='contained' style={styles.resetButton} onClick={() => this.runSortingAlgorithm()}>Sort!</Button></Box>
+                    <Box display='inline'><Button variant='contained' style={styles.stopButton} onClick={() => {window.location.reload()}}>Stop</Button></Box>
+                    
+                    <Box m={5}>
+                      <SpeedSlider isDisabled={this.state.sliderDisabled}/>
+                    </Box>
+                    <Box m={5}>
+                      <InputSlider isDisabled={this.state.sliderDisabled}/>
+                    </Box>
+                </Toolbar>
+            </AppBar>
+          </ThemeProvider>
+          
+          <Box m={2}><Title title={this.state.title} color='secondary'></Title></Box>
 
-        <Box m={2}><Title title={this.state.title}></Title></Box>
-
-        <div className='array-container'>
-          {array.map((value, idx) => (
-            <div
-              className='array-bar'
-              key={idx}
-              style={{
-                backgroundColor: PRIMARY_COLOR,
-                height: `${value}px`,
-              }}></div>
-          ))}
+          <div className='array-container'>
+            {array.map((value, idx) => (
+              <div
+                className='array-bar'
+                key={idx}
+                style={{
+                  backgroundColor: '#aec6cf',
+                  height: `${value}px`,
+                }}></div>
+            ))}
+          </div>
         </div>
-      </div>
     );
   }
 }

@@ -3,6 +3,6 @@ import Typography from '@material-ui/core/Typography';
 
 export class Title extends React.Component {
   render() {
-    return <Typography variant='h2'>{this.props.title}</Typography>;
+    return <Typography variant='h2' className="title">{this.props.title}</Typography>;
   }
 }
