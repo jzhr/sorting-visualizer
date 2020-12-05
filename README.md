@@ -5,6 +5,8 @@ A visualization tool to compare different sorting algorithms.
 
 You can try it out here: https://jzhr.github.io/sorting-visualizer/
 
+![](sorting.gif)
+
 ## Available Scripts
 
 In the project directory, you can run:
