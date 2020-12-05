@@ -58,16 +58,16 @@ class SortingVisualizer extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.inputSize.value !== prevProps.inputSize.value) {
+      let tempTitle = this.state.title;
       this.resetArray();
+      this.setState({title: tempTitle});
     }
   }
 
   resetArray() {
-    this.setState({
-      title: 'Select a sorting algorithm'
-    });
+    this.setState({title: 'Select a sorting algorithm'});
 
-    this.enableButtons()
+    this.enableButtons();
     const array = [];
 
     for (let i = 0; i < this.props.inputSize.value; i++) {
