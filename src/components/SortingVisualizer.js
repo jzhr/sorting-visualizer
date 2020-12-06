@@ -26,7 +26,7 @@ const theme = createMuiTheme({
     },
     secondary: {
       main: '#e7e7e7',
-      dark: '#89ff89',
+      dark: '#2cb22c',
     },
   },
 });
@@ -188,12 +188,16 @@ class SortingVisualizer extends React.Component {
     const {array} = this.state;
     const styles = {
       resetButton: {
+        backgroundColor: '#966fd6',
+        color: theme.palette.secondary.main
+      },
+      sortButton: {
         backgroundColor: theme.palette.secondary.dark,
-        color: theme.palette.primary.main
+        color: theme.palette.secondary.main
       },
       stopButton: {
         backgroundColor: theme.palette.error.main,
-        color: theme.palette.primary.main
+        color: theme.palette.secondary.main
       }
     }
   
@@ -208,13 +212,13 @@ class SortingVisualizer extends React.Component {
                       </Typography>
                     </ThemeProvider>
                     
-                    <Box display='inline' m={3}><Button disabled={this.state.resetDisabled} variant='contained' color='primary' onClick={() => this.resetArray()}>Reset</Button></Box>
+                    <Box display='inline' m={3}><Button disabled={this.state.resetDisabled} variant='contained' style={styles.resetButton} onClick={() => this.resetArray()}>Reset</Button></Box>
                     <Box display='inline' m={1}><Button disabled={this.state.selectionDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(0)}>Selection Sort</Button></Box>
                     <Box display='inline' m={1}><Button disabled={this.state.insertionDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(1)}>Insertion Sort</Button></Box>
                     <Box display='inline' m={1}><Button disabled={this.state.bubbleDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(2)}>Bubble Sort</Button></Box>
                     <Box display='inline' m={1}><Button disabled={this.state.mergeDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(3)}>Merge Sort</Button></Box>
                     <Box display='inline' m={1}><Button disabled={this.state.quickDisabled} variant='contained' color='primary' onClick={() => this.selectSortingAlgorithm(4)}>Quick Sort</Button></Box>
-                    <Box display='inline' m={3}><Button disabled={this.state.sortDisabled} variant='contained' style={styles.resetButton} onClick={() => this.runSortingAlgorithm()}>Sort!</Button></Box>
+                    <Box display='inline' m={3}><Button disabled={this.state.sortDisabled} variant='contained' style={styles.sortButton} onClick={() => this.runSortingAlgorithm()}>Sort!</Button></Box>
                     <Box display='inline'><Button variant='contained' style={styles.stopButton} onClick={() => {window.location.reload()}}>Stop</Button></Box>
                     
                     <Box m={5}>
